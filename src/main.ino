@@ -1,8 +1,4 @@
-
-
-#include <ArduinoBLE.h>
-#include <NeoPixelBus.h>
-#include "config.h"
+#include "main.h"
 
 #ifdef GRB
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
