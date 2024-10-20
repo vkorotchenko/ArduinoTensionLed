@@ -22,6 +22,8 @@ bool processHolds = false;
 void setup() {
   Serial.begin(9600);
 
+  clearBoard();
+  
   // Test LEDs by cycling through the colours and then turning the LEDs off again
   strip.SetPixelColor(0, green.colour);
   for (int i = 0; i < PixelCount; i++) {
@@ -107,14 +109,9 @@ void display(byte incoming[], int length){
     }
 
     if(currentRead == 1) {
-            Serial.println("start reading");
+      Serial.println("start reading");
 
-      if(lastRead == 0){ // starting incoming command - clear board
-        clearBoard();
-      }
-      if(lastRead == 1) { // there are no objects to display and already cleared board
-        //intentionally empty
-      }
+      clearBoard();
     }
 
     if (currentRead == 3) { // end command
@@ -139,23 +136,55 @@ void display(byte incoming[], int length){
 }
 
 void displaySingleLed(int holdId, int colourId) {
-  // get index of hold ID:
-  int index; 
-  for (int i=0; i<sizeof(ledmapping); i++) {
-   if (holdId == ledmapping[i]) {
-     index = i;
-     break;
+  //get colour
+  colour colour;
+  bool isBright;
+
+  Serial.print(" holdid: ");
+  Serial.print(holdId);
+  Serial.print(" colour: ");
+  Serial.println(colourId);
+  
+  
+  for (int i = 0; i < sizeof(colours); i++) {
+   if (colourId == colours[i].id) {
+     colour = colours[i];
+     isBright = false;
+   }
+   if (colourId == colours[i].bright_id) {
+    colour = colours[i];
+    isBright = true;
    }
   }
   
-  //get colour
-  colour colour;
-  
-  for (int i=0; i<sizeof(colours); i++) {
-   if (colourId == colours[i].id) {
-     colour = colours[i];
-     break;
-   }
+  Serial.print(" bright? : ");
+  Serial.print(isBright? "yes": "no");
+  Serial.print(" colour: ");
+  Serial.println(isBright?colour.bright_name:colour.name);
+
+
+  int index; 
+    // get index of hold ID:
+  if (isBright == true) {
+    for (int i = 0; i < sizeof(brightledmapping); i++) {
+      if (holdId == brightledmapping[i]) {
+        
+        Serial.print(" found bright at : ");
+        Serial.println(i);
+        index = i + bright_offset;
+        break;
+      }
+    }
+  } else {
+    for (int i = 0; i < sizeof(ledmapping); i++) {
+      if (holdId == ledmapping[i]) {
+        Serial.print(" found non bright at : ");
+        Serial.println(i);
+        index = i;
+        break;
+      }
+    }
+
   }
 
   // light up the appropriate colour
@@ -166,11 +195,13 @@ void displaySingleLed(int holdId, int colourId) {
   Serial.print(" index: ");
   Serial.print(index);
   Serial.print(" colour: ");
-  Serial.println(colour.name);
+  Serial.println(isBright? colour.bright_name : colour.name);
 
 }
 
 void clearBoard() {
+  Serial.println("clear board");
+
   strip.ClearTo(black);
   strip.Show();
 }
