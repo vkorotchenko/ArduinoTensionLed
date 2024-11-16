@@ -1,4 +1,5 @@
 #include <unity.h>
+#include <tension.h>
 
 void setUp(void) {
     // set stuff up here
@@ -9,7 +10,10 @@ void tearDown(void) {
 }
 
 void test_calculator_addition(void) {
-    TEST_ASSERT_EQUAL(32,32);
+   Tension tension;
+   tension.getBrightColourIndex(0);
+    TEST_ASSERT_EQUAL(28, tension.getColourIndex(0));
+
 }
 
 int main(int argc, char **argv) {
