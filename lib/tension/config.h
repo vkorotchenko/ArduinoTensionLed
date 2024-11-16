@@ -1,4 +1,5 @@
-
+#ifndef TENSION_CONFIG_H
+#define TENSION_CONFIG_H
 #include <NeoPixelBus.h>
 
 // Adjust brightness settings to your personal needs and light situation
@@ -56,3 +57,5 @@ colour blue = {blue_led, 12, "blue",blue_led_bright, 13, "bright blue"};
 colour pink = {pink_led, 204, "pink",pink_led_bright, 205, "bright pink"};
 
 colour colours[] = {red, green, blue, pink};
+
+#endif
