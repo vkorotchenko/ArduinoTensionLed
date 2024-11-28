@@ -7,7 +7,7 @@
 
 #define RGB // Change this to GRB if your colors are off
 
-const uint8_t PixelPin = 3;  // Adjust only if you don't use pin D2 of Arduino Nano 33 BLE for the data line
+const uint8_t PixelPin = 2;  // Adjust only if you don't use pin D2 of Arduino Nano 33 BLE for the data line
 const uint16_t PixelCount = 200;
 
 int ledmapping[] = { // mapping of the hold Ids int he tension board correlating to the index for the strip to light up, hold ID 22 is A1, to ID 39 is A18.. ID 74 is B18 to B1 (57) etc.
