@@ -93,11 +93,9 @@ void tensionCharacteristicWritten(BLEDevice central, BLECharacteristic character
 }
 
 void display(byte incoming[], int length){
-
   for (int i = 0; i <length; i++) {
     int currentRead = (int)incoming[i];
 
-    Serial.println(currentRead);
     if(processHolds) { // if we are processing holds 
       if(!isHold) {  // if its a hold then store id until we get the next item
         lastRead = currentRead;
@@ -109,14 +107,10 @@ void display(byte incoming[], int length){
     }
 
     if(currentRead == 1) {
-      Serial.println("start reading");
-
       clearBoard();
     }
 
     if (currentRead == 3) { // end command
-        Serial.println("end processing");
-
         strip.Show();
         lastRead = 0;
         isHold = false;
@@ -125,7 +119,6 @@ void display(byte incoming[], int length){
     }
 
     if (currentRead == 80) { // hold and colours begin, alternating
-      Serial.println("start processing");
       processHolds = true;
       isHold = false;
     }
@@ -140,48 +133,42 @@ void displaySingleLed(int holdId, int colourId) {
   colour colour;
   bool isBright;
 
-  Serial.print(" holdid: ");
-  Serial.print(holdId);
-  Serial.print(" colour: ");
-  Serial.println(colourId);
-  
-  
-  for (int i = 0; i < sizeof(colours); i++) {
+  for (int i = 0; i < sizeof(colours)/sizeof(colours[0]); i++) {
    if (colourId == colours[i].id) {
      colour = colours[i];
      isBright = false;
+     break;
    }
    if (colourId == colours[i].bright_id) {
     colour = colours[i];
     isBright = true;
+    break;
    }
   }
   
-  Serial.print(" bright? : ");
-  Serial.print(isBright? "yes": "no");
-  Serial.print(" colour: ");
-  Serial.println(isBright?colour.bright_name:colour.name);
-
-
   int index; 
     // get index of hold ID:
   if (isBright == true) {
     for (int i = 0; i < sizeof(brightledmapping); i++) {
       if (holdId == brightledmapping[i]) {
-        
-        Serial.print(" found bright at : ");
-        Serial.println(i);
         index = i + bright_offset;
         break;
       }
     }
   } else {
-    for (int i = 0; i < sizeof(ledmapping); i++) {
-      if (holdId == ledmapping[i]) {
-        Serial.print(" found non bright at : ");
-        Serial.println(i);
-        index = i;
-        break;
+    if (holdId < 22) {
+      for (int i = 0; i < sizeof(footholdmapping); i++) {
+        if (holdId == footholdmapping[i]) {
+          index = i + foothold_offset;
+          break;
+        }
+      }
+    } else {
+      for (int i = 0; i < sizeof(ledmapping); i++) {
+        if (holdId == ledmapping[i]) {
+          index = i;
+          break;
+        }
       }
     }
 
@@ -200,8 +187,6 @@ void displaySingleLed(int holdId, int colourId) {
 }
 
 void clearBoard() {
-  Serial.println("clear board");
-
   strip.ClearTo(black);
   strip.Show();
 }
