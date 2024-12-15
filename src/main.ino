@@ -88,6 +88,12 @@ void tensionCharacteristicWritten(BLEDevice central, BLECharacteristic character
 
   characteristic.readValue(incoming, length);
 
+  for (int i = 0; i < length; i++) {
+    Serial.print(incoming[i]);
+    Serial.print("-");
+  }
+  Serial.println();
+
   display(incoming, length);
 
 }
@@ -106,11 +112,11 @@ void display(byte incoming[], int length){
       }
     }
 
-    if(currentRead == 1) {
+    if(currentRead == 1 && i == 0) {
       clearBoard();
     }
 
-    if (currentRead == 3) { // end command
+    if (currentRead == 3 && i == length - 1) { // end command
         strip.Show();
         lastRead = 0;
         isHold = false;
@@ -149,7 +155,7 @@ void displaySingleLed(int holdId, int colourId) {
   int index; 
     // get index of hold ID:
   if (isBright == true) {
-    for (int i = 0; i < sizeof(brightledmapping); i++) {
+    for (int i = 0; i < sizeof(brightledmapping)/sizeof(brightledmapping[0]); i++) {
       if (holdId == brightledmapping[i]) {
         index = i + bright_offset;
         break;
@@ -157,14 +163,14 @@ void displaySingleLed(int holdId, int colourId) {
     }
   } else {
     if (holdId < 22) {
-      for (int i = 0; i < sizeof(footholdmapping); i++) {
+      for (int i = 0; i < sizeof(footholdmapping)/sizeof(footholdmapping[0]); i++) {
         if (holdId == footholdmapping[i]) {
           index = i + foothold_offset;
           break;
         }
       }
     } else {
-      for (int i = 0; i < sizeof(ledmapping); i++) {
+      for (int i = 0; i < sizeof(ledmapping)/sizeof(ledmapping[0]); i++) {
         if (holdId == ledmapping[i]) {
           index = i;
           break;
