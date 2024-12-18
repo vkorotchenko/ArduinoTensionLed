@@ -76,11 +76,27 @@ void setup() {
 
   tensionCharacteristic.setEventHandler(BLEWritten, tensionCharacteristicWritten);
 
+  BLE.setEventHandler(BLEConnected, ConnectHandler);
+  BLE.setEventHandler(BLEDisconnected, DisconnectHandler);
+
   // start advertising
   BLE.advertise();
 
   Serial.println("Bluetooth® device active, waiting for connections...");
 }
+
+void ConnectHandler(BLEDevice central) {
+  Serial.print("Connected event, central: ");
+  Serial.println(central.address());
+  BLE.advertise();
+}
+
+void DisconnectHandler(BLEDevice central) {
+  Serial.print("Disconnected event, central: ");
+  Serial.println(central.address());
+  BLE.advertise();
+}
+
 
 void tensionCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
   int length = characteristic.valueLength();
